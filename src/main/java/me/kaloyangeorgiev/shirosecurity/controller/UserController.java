@@ -16,34 +16,28 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/all")
-    @RequiresPermissions("user:all")
+    @RequiresPermissions("canSeeAllUsers")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{username}")
-    @RequiresPermissions("user:specific")
+    @GetMapping("/user/{username}")
+    @RequiresPermissions("canSeeUserByUsername")
     public User getUser(@PathVariable("username") String username) {
         return userService.getUser(username);
     }
 
-    @PostMapping("/add")
-    @RequiresPermissions("user:moderator")
-    public User addUser(@RequestBody User user) {
-        return userService.addUser(user);
-    }
-
     @GetMapping("/welcome")
     public String getWelcomeMessage() {
-        return "Welcome to this API, please login to view users!";
+        return "Welcome to this API, please login to view cats!";
     }
 
-    @PostMapping("/login")
+    @GetMapping("/login")
     public String login() {
         Subject subject = SecurityUtils.getSubject();
 
         if (subject.isAuthenticated()) {
-            return "redirect:/index";
+            return "Logged in as: " + subject.getPrincipal().toString();
         }
 
         return "redirect:/login";
@@ -52,6 +46,6 @@ public class UserController {
     @GetMapping("/logout")
     public String logout() {
         SecurityUtils.getSubject().logout();
-        return "redirect:'/login";
+        return "Logged out!";
     }
 }
